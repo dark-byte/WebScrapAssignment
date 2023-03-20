@@ -3,19 +3,19 @@ from bs4 import BeautifulSoup
 import csv
 
 baseUrl = "https://www.amazon.in"
-url = baseUrl + "/s?k=bags&crid=2M096C61O4MLT&qid=1653308124&sprefix=ba%2Caps%2C283&ref=sr_pg_1"
+url = "https://www.amazon.in/s?k=laptops&crid=25L424VQM3KIQ&sprefix=lapt%2Caps%2C284&ref=nb_sb_noss_2"
 
 def getProducts(url):
     r = requests.get(url)
-    soup = BeautifulSoup(r.text, 'html.parser')
+    soup = BeautifulSoup(r.content, 'html.parser')
     return soup
 
 
 def writeProduct(soup):
     prodList = soup.find_all(
-        'div', class_="sg-col-20-of-24 s-result-item s-asin sg-col-0-of-12 sg-col-16-of-20 AdHolder sg-col s-widget-spacing-small sg-col-12-of-16")
+        'div', class_="sg-col-20-of-24 s-result-item s-asin sg-col-0-of-12 sg-col-16-of-20 sg-col s-widget-spacing-small sg-col-12-of-16")
 
-    print(prodList)
+    # print(prodList)
 
     for item in prodList:
         url = item.find('a', class_="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal")['href']
