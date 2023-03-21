@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import csv
 
 baseUrl = "https://www.amazon.in"
-url = "https://www.amazon.in/s?k=laptops&crid=25L424VQM3KIQ&sprefix=lapt%2Caps%2C284&ref=nb_sb_noss_2"
+url = "https://www.amazon.in/s?k=bags&crid=2M096C61O4MLT&qid=1653308124&sprefix=ba%2Caps%2C283&ref=sr_pg_1"
 
 def getProducts(url):
     r = requests.get(url)
@@ -20,7 +20,10 @@ def writeProduct(soup):
     for item in prodList:
         url = item.find('a', class_="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal")['href']
         name = item.find('span', class_="a-size-medium a-color-base a-text-normal").text
-        price = item.find('span', class_="a-price-whole").text
+        try:
+            price = item.find('span', class_="a-price-whole").text
+        except:
+            price = "N/A"
         try:
             rating = item.find('span', class_="a-size-base").text
         except:
@@ -34,12 +37,17 @@ def writeProduct(soup):
 
 
 def getNextUrl(soup):
-    try:
-        next = soup.find('a', class_="s-pagination-item s-pagination-next s-pagination-button s-pagination-separator")['href']
-        url = baseUrl + str(next)
-        return url
-    except:
+    pages = soup.find(
+        'div', class_="a-section a-text-center s-pagination-container")
+    if (not pages):
+        print("Pagination not found")
         return
+    if (pages.find('span', class_="s-pagination-item s-pagination-selected").text == "20"):
+        return
+    else:
+        url = pages.find(
+            'a', class_="s-pagination-item s-pagination-next s-pagination-button s-pagination-separator")['href']
+        return baseUrl + str(url)
    
 with open('products.csv', 'w', encoding='utf8', newline='') as f:
     header = ['Url', 'Name', 'Price', 'Rating', 'No of Reviews']
